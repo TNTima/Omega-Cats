@@ -1,9 +1,82 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Mvc
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
 
-<Counter IncrementAmount="10" />
+<text>@text</text>
+
+<input @* inputmode = "" src ="text"  *@  name="URL">
+
+<button class="btn btn-primary" @onclick="Enter">Click me</button>
+
+<h2>Image Display</h2>
+
+<img src="@imageUrl" alt="status-cat" />
+
+@code{
+    public string text = "Enter URL";
+
+    public string imageUrl = "https://http.cat/images/101.jpg";
+
+    private string userUrl = "https://ya.ru/";
+
+
+    private void Enter()
+    {
+        // imageUrl = "https://http.cat/images/100.jpg";
+        text = $"you entered URL {userUrl}";
+        Console.WriteLine("you pressed ENTER");
+        SubmitURL();
+    }
+
+    private async void SubmitURL()
+    {
+        Console.WriteLine($"URL submitted: {userUrl}");
+
+        int? maybeCode = await GetStatusCodeFromUrlAsync(userUrl);
+        int status_code;
+        if (maybeCode.HasValue)
+        {
+            status_code = maybeCode.Value;
+        }
+        else
+        {
+            // throw new Exception("errorr");
+            // Console.WriteLine("Somethig went wrong");
+            text = "bad URL";
+            return;
+        }
+        Console.WriteLine($"Status code: {status_code}");
+        imageUrl = $"https://http.cat/{status_code}";
+
+    }
+    // public async Task< GetCatStatusCode> Aff ()
+    // {
+
+    //     using (WebClient client = new WebClient()) 
+    //     {
+    //         client.DownloadFile(new Uri(url), @"c:\temp\image35.png");
+    //         OR 
+    //         client.DownloadFileAsync(new Uri(url), @"c:\temp\image35.png");
+    //     }
+    // }
+
+    public async Task<int?> GetStatusCodeFromUrlAsync(string url)
+    {
+        var httpClient = new HttpClient();
+        try
+        {
+            HttpResponseMessage response = await httpClient.GetAsync(url);
+            return (int)response.StatusCode;
+        }
+        catch (HttpRequestException)
+        {
+            return null;
+        }
+    }
+}

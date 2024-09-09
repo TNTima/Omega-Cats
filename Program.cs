@@ -1,5 +1,8 @@
 using Cats.Components;
 
+Console.WriteLine("Hell World");
+//using UrlService;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -25,3 +28,4 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
